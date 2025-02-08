@@ -1,0 +1,4 @@
+export enum GameResult {
+  GOTE_WIN_TORYO = 'GOTE_WIN_TORYO',
+  SENTE_WIN_TORYO = 'SENTE_WIN_TORYO'
+}

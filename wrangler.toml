@@ -1,0 +1,35 @@
+name = "mito-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-30"
+send_metrics = true
+compatibility_flags = ["nodejs_compat_v2"]
+logpush = true
+
+# Cloudflare Workers R2 buckets
+# r2_buckets = [
+#   { binding = "HONO_WORKERS_EXAMPLE", bucket_name = "HONO_WORKERS_EXAMPLE", preview_bucket_name = "HONO_WORKERS_EXAMPLE_PREVIEW" },
+# ]
+
+# Cloudflare Workers KV namespaces
+# kv_namespaces = [
+#   { binding = "HONO_WORKERS_EXAMPLE", id = "HONO_WORKERS_EXAMPLE", preview_id = "HONO_WORKERS_EXAMPLE_PREVIEW" },
+# ]
+
+# Cron Events
+[triggers]
+crons = []
+
+# Variables
+[vars]
+
+[env.dev]
+
+[env.dev.vars]
+
+[env.dev.observability]
+enabled = true
+head_sampling_rate = 1
+
+[dev]
+ip = "0.0.0.0"
+port = 8787
