@@ -12,7 +12,7 @@ export const app = new OpenAPIHono<{ Bindings: Bindings }>()
 app.openapi(
   createRoute({
     method: HTTPMethod.GET,
-    path: '/users/{user_id}',
+    path: '/{user_id}',
     tags: ['ユーザー'],
     summary: '棋譜一覧',
     description: '指定したユーザーの棋譜を取得します。',
