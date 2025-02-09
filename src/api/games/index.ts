@@ -21,12 +21,19 @@ app.openapi(
       })
     },
     responses: {
-      200: {},
+      200: {
+        content: {
+          'application/json': {
+            schema: z.array(GameModel).openapi({ description: '棋譜一覧' })
+          }
+        },
+        description: '棋譜一覧'
+      },
       ...NotFoundResponse
     }
   }),
   async (c) => {
-    const { game_id } = c.req.valid('param')
+    const { game_id } = c.req.valid<'param'>('param')
     return c.text((await request(c, new Game(c, game_id), GameModel)).csa)
   }
 )

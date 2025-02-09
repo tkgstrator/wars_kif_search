@@ -25,7 +25,7 @@ app.openapi(
       200: {
         content: {
           'application/json': {
-            schema: z.array(GameInfo).openapi({ description: '棋譜一覧' })
+            schema: z.array(GameInfo).openapi({ description: '棋譜詳細' })
           }
         },
         description: '棋譜一覧'
@@ -34,7 +34,7 @@ app.openapi(
     }
   }),
   async (c) => {
-    const { user_id } = c.req.valid('param')
+    const { user_id } = c.req.valid<'param'>('param')
     const games: GameInfo[] = (
       await Promise.all([
         request(c, new User(user_id, GameType.MIN_10, 1), GameInfoList),
