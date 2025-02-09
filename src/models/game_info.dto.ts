@@ -1,14 +1,43 @@
+import { Platform } from '@/enums/platform'
+import { ResultType } from '@/enums/result_type'
+import { RuleType } from '@/enums/rule_type'
+import { TimeType } from '@/enums/time_type'
 import { z } from '@hono/zod-openapi'
 import selectAll, { selectOne } from 'css-select'
 import dayjs from 'dayjs'
 import { HTTPException } from 'hono/http-exception'
 import { DomUtils, parseDocument } from 'htmlparser2'
 
+const Player = z.object({
+  name: z.string(),
+  rank: z.number().int(),
+  is_win: z.boolean()
+})
+
 export const GameInfo = z.preprocess(
   (input: unknown) => {
     if (input === null || input === undefined) {
       return input
     }
+    // 千日手の場合にはどちらもlose_playerになる
+    // @ts-ignore
+    const player_match: RegExpMatchArray | null = input.match(/win_player" href="\/users\/mypage\/(.+?)\?/)
+    // @ts-ignore
+    const players = [...input.matchAll(/(.*?)\s(\d+?)\s(Dan|Kyu)/g)].map((rank) => rank.map((v) => v.trim()))
+    // @ts-ignore
+    const category_match: RegExpMatchArray | null = input.match(
+      /<div class="game_category">\s*\[([\s\S]*?)\]\s([\S]*?)\s*<\/div>/
+    )
+    if (category_match === null) {
+      throw new HTTPException(400, { message: 'category parse error' })
+    }
+    const time: TimeType =
+      category_match[1] === '10 minutes'
+        ? TimeType.MIN_10
+        : category_match[1] === '3 minutes'
+          ? TimeType.MIN_3
+          : TimeType.SEC_10
+    const rule: RuleType = category_match[2] === 'normal' ? RuleType.NORMAL : RuleType.UNKNOWN
     // @ts-ignore
     const match: RegExpMatchArray | null = input.match(/wars_game_id=([a-zA-Z0-9_-]+)/)
     if (match === null) {
@@ -25,21 +54,42 @@ export const GameInfo = z.preprocess(
       throw new HTTPException(400, { message: 'play time parse error' })
     }
     // @ts-ignore
-    const tags = [...input.matchAll(/<a class="hashtag_badge"[^>]*>#(.*?)<\/a>/g)]
+    const tags: number[] = [...input.matchAll(/\/trophy\/(\d+)/g)].map((tag) => Number.parseInt(tag[1], 10))
     return {
       game_id: game_id,
       play_time: dayjs(play_time[1], 'YYYYMMDD_HHmmss').tz('Asia/Tokyo').toISOString(),
-      black: black[1],
-      white: white[1],
-      tags: tags.map((tag) => tag[1].trim())
+      black: {
+        name: players[0][1],
+        rank: Number.parseInt(players[0][2], 10),
+        is_win: player_match === null ? false : player_match[1] === players[0][1]
+      },
+      white: {
+        name: players[1][1],
+        rank: Number.parseInt(players[1][2], 10),
+        is_win: player_match === null ? false : player_match[1] === players[1][1]
+      },
+      platform: Platform.SHOGI_WARS,
+      time: time,
+      rule: rule,
+      result:
+        player_match === null
+          ? ResultType.DRAW
+          : player_match[1] === players[0][1]
+            ? ResultType.BLACK_WIN
+            : ResultType.WHITE_WIN,
+      tags: tags
     }
   },
   z.object({
     game_id: z.string(),
     play_time: z.string(),
-    black: z.string(),
-    white: z.string(),
-    tags: z.array(z.string())
+    black: Player,
+    white: Player,
+    time: z.nativeEnum(TimeType),
+    rule: z.nativeEnum(RuleType),
+    result: z.nativeEnum(ResultType),
+    platform: z.nativeEnum(Platform),
+    tags: z.array(z.number())
   })
 )
 

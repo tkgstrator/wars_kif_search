@@ -17,7 +17,7 @@ export class Game implements RequestType {
       user_id: c.env.USER_ID,
       secret: c.env.SECRET,
       game_id: game_id,
-      locale: 'ja',
+      locale: 'en',
       version: 'webapp_9.0.0_standard'
     }
   }

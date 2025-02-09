@@ -15,7 +15,7 @@ export class User implements RequestType {
   constructor(user_id: string, gtype: GameType, page: number) {
     this.parameters = {
       gtype: gtype,
-      locale: 'ja',
+      locale: 'en',
       page: page,
       user_id: user_id,
       version: 'webapp_9.0.0_standard'
