@@ -1,6 +1,6 @@
-name = "mito-worker"
+name = "wars_kif_search"
 main = "src/index.ts"
-compatibility_date = "2024-09-30"
+compatibility_date = "2024-11-11"
 send_metrics = true
 compatibility_flags = ["nodejs_compat_v2"]
 logpush = true
