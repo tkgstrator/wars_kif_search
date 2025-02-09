@@ -31,6 +31,7 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.tz.setDefault('Asia/Tokyo')
 
+app.basePath('/api')
 app.use('*', (c, next) => {
   if (new URL(c.req.url).hostname !== 'localhost') {
     cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
@@ -41,8 +42,11 @@ app.use(logger())
 app.use(csrf())
 app.use(compress({ encoding: 'deflate' }))
 app.use('*', cors())
-app.doc('/api/specification', specification)
-app.get('/api/docs', apiReference(reference))
+if (!process.env.DEV) {
+  app.doc('/api/specification', specification)
+  app.get('/api/docs', apiReference(reference))
+  app.notFound((c) => c.redirect('/api/docs'))
+}
 app.onError(async (error, c) => {
   if (error instanceof HTTPException) {
     return c.json({ message: error.message }, error.status)
@@ -52,8 +56,6 @@ app.onError(async (error, c) => {
   }
   return c.json({ message: error.message }, 500)
 })
-app.notFound((c) => c.redirect('/api/docs'))
-
 app.route('/api/users', users)
 app.route('/api/games', games)
 
