@@ -4,7 +4,7 @@ import { lowerCase, startCase, upperFirst } from 'lodash'
 
 export const reference: ApiReferenceOptions = {
   spec: {
-    url: '/specification'
+    url: '/api/specification'
   },
   defaultHttpClient: {
     targetKey: 'node',
