@@ -12,6 +12,7 @@ import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { ZodError } from 'zod'
 import { app as games } from './api/games'
+import { app as oauth } from './api/oauth'
 import { app as users } from './api/users'
 import type { Bindings } from './utils/bindings'
 import { reference, specification } from './utils/docs'
@@ -58,6 +59,7 @@ app.onError(async (error, c) => {
 })
 app.route('/api/users', users)
 app.route('/api/games', games)
+app.route('/api/oauth', oauth)
 
 export default {
   fetch: app.fetch,

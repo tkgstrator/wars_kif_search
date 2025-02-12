@@ -5,19 +5,15 @@ send_metrics = true
 compatibility_flags = ["nodejs_compat_v2"]
 logpush = true
 
-[[routes]]
-pattern = "dev.mito-shogi.com/api/*"
-zone_id = "0dedee5b5fea85af3cbf8135d0c1e40c"
-
 # Cloudflare Workers R2 buckets
 # r2_buckets = [
 #   { binding = "HONO_WORKERS_EXAMPLE", bucket_name = "HONO_WORKERS_EXAMPLE", preview_bucket_name = "HONO_WORKERS_EXAMPLE_PREVIEW" },
 # ]
 
 # Cloudflare Workers KV namespaces
-# kv_namespaces = [
-#   { binding = "HONO_WORKERS_EXAMPLE", id = "HONO_WORKERS_EXAMPLE", preview_id = "HONO_WORKERS_EXAMPLE_PREVIEW" },
-# ]
+kv_namespaces = [
+  { binding = "USERS", id = "8190882e6b104bf08561b1f2257f25d9", preview_id = "048371d8d5114023925d4b4364d1e668" },
+]
 
 # Cron Events
 [triggers]

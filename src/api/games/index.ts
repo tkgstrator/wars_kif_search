@@ -3,7 +3,7 @@ import { Game as GameModel } from '@/models/game.dto'
 import { Game } from '@/requests/game'
 import type { Bindings } from '@/utils/bindings'
 import { request } from '@/utils/request_type'
-import { BadRequestResponse, NotFoundResponse } from '@/utils/response'
+import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 
 export const app = new OpenAPIHono<{ Bindings: Bindings }>()
