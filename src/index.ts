@@ -1,4 +1,4 @@
-import { OpenAPIHono as Hono, createRoute } from '@hono/zod-openapi'
+import { OpenAPIHono as Hono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -42,7 +42,13 @@ app.use('*', (c, next) => {
 app.use(logger())
 app.use(csrf())
 app.use(compress({ encoding: 'deflate' }))
-app.use('*', cors())
+app.use(
+  '*',
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  })
+)
 if (!process.env.DEV) {
   app.doc('/api/specification', specification)
   app.get('/api/docs', apiReference(reference))

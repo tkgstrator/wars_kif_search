@@ -1,9 +1,7 @@
 import { HTTPEncoding } from '@/enums/encoding'
 import type { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
-import type { Bindings } from '@/utils/bindings'
 import type { HTTPHeaders, RequestType } from '@/utils/request_type'
-import type { Context } from 'hono'
 
 export class User implements RequestType {
   method = HTTPMethod.GET

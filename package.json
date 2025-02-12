@@ -42,7 +42,7 @@
     "@types/node": "^22.13.1",
     "commitizen": "^4.3.1",
     "husky": "^9.1.7",
-    "wrangler": "3.107.3"
+    "wrangler": "3.108.1"
   },
   "module": "index.ts",
   "type": "module",

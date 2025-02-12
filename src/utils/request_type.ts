@@ -1,12 +1,8 @@
 import { HTTPEncoding } from '@/enums/encoding'
 import type { HTTPMethod } from '@/enums/method'
-import select from 'css-select'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { RequestContext } from 'hono/jsx-renderer'
-import type { ContentfulStatusCode, StatusCode } from 'hono/utils/http-status'
-import { parseDocument } from 'htmlparser2'
-import { DomUtils } from 'htmlparser2'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { ZodSchema } from 'zod'
 import type { Bindings } from './bindings'
 
@@ -35,14 +31,10 @@ export const request = async <T, U>(
     ).toString()
   }
 
-  request.headers = { ...request.headers, Cookie: `_web_session=${c.env.COOKIE}` }
+  request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
   if (request.encoding === HTTPEncoding.JSON) {
     request.headers = { 'Content-Type': 'application/json' }
   }
-
-  // console.debug('[URL]:', url.href)
-  // console.debug('[Headers]:', request.headers)
-  // console.debug('[Parameters]:', request.parameters)
 
   const response = await fetch(url.href, {
     method: request.method,

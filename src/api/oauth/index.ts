@@ -12,8 +12,8 @@ app.openapi(
     method: HTTPMethod.GET,
     path: '/callback',
     tags: ['認証'],
-    summary: 'Discord OAuth2',
-    description: 'Discord OAuth2のコールバックです。',
+    summary: 'ログイン',
+    description: 'Discord OAuth2のコールバックです',
     request: {
       query: z.object({
         code: z.string(),
