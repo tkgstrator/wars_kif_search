@@ -2,7 +2,7 @@ import { GameType } from '@/enums/game_type'
 import { z } from '@hono/zod-openapi'
 import dayjs from 'dayjs'
 import { HTTPException } from 'hono/http-exception'
-import { Move, Position, type Record, RecordMetadataKey, exportCSA, importCSA } from 'tsshogi'
+import { type Record, exportCSA, importCSA } from 'tsshogi'
 
 export const Game = z
   .object({

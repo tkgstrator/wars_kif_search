@@ -1,8 +1,9 @@
 import { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
-import { Game as GameModel } from '@/models/game.dto'
+import { Game } from '@/models/game.dto'
 import { type GameInfo, GameInfoList } from '@/models/game_info.dto'
-import { Game } from '@/requests/game'
+import { Paginated } from '@/models/paginated.dto'
+import { GameQuery } from '@/requests/game'
 import { User } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
 import { bearerToken } from '@/utils/middlewares/bearerToken'
@@ -25,7 +26,7 @@ app.openapi(
       200: {
         content: {
           'application/json': {
-            schema: z.array(GameModel).openapi({ description: '棋譜一覧' })
+            schema: Paginated(Game).openapi({ description: '棋譜一覧' })
           }
         },
         description: '棋譜一覧'
@@ -35,7 +36,6 @@ app.openapi(
   }),
   async (c) => {
     const { uid } = c.get('jwtPayload')
-    console.log(uid)
     const games: GameInfo[] = (
       await Promise.all([
         // @ts-ignore
@@ -46,8 +46,10 @@ app.openapi(
         request(c, new User(uid, GameType.SEC_10, 1), GameInfoList)
       ])
     ).flat()
-    console.log(games)
-    return c.json(games)
+    return c.json({
+      count: games.length,
+      results: games
+    })
   }
 )
 
@@ -68,7 +70,7 @@ app.openapi(
       200: {
         content: {
           'application/json': {
-            schema: z.array(GameModel).openapi({ description: '棋譜' })
+            schema: z.array(Game).openapi({ description: '棋譜' })
           }
         },
         description: '棋譜'
@@ -79,6 +81,6 @@ app.openapi(
   async (c) => {
     const { game_id } = c.req.valid<'param'>('param')
     // @ts-ignore
-    return c.text((await request(c, new Game(c, game_id), GameModel)).csa)
+    return c.text((await request(c, new GameQuery(c, game_id), Game)).csa)
   }
 )

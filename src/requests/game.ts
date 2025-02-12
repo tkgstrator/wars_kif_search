@@ -1,11 +1,10 @@
 import { HTTPEncoding } from '@/enums/encoding'
-import type { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import type { Bindings } from '@/utils/bindings'
 import type { HTTPHeaders, RequestType } from '@/utils/request_type'
 import type { Context } from 'hono'
 
-export class Game implements RequestType {
+export class GameQuery implements RequestType {
   method = HTTPMethod.GET
   path = 'api/app/games/game_analysis_info'
   headers?: HTTPHeaders | undefined
@@ -14,8 +13,8 @@ export class Game implements RequestType {
 
   constructor(c: Context<{ Bindings: Bindings }>, game_id: string) {
     this.parameters = {
-      user_id: c.env.USER_ID,
-      secret: c.env.SECRET,
+      user_id: c.env.WARS_USER_ID,
+      secret: c.env.WARS_SECRET,
       game_id: game_id,
       locale: 'en',
       version: 'webapp_9.0.0_standard'
