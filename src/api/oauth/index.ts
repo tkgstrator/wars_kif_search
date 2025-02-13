@@ -1,6 +1,7 @@
 import { HTTPMethod } from '@/enums/method'
 import type { Bindings } from '@/utils/bindings'
 import { create_token } from '@/utils/discord'
+import { bearerToken } from '@/utils/middlewares/bearerToken'
 import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { deleteCookie, setCookie } from 'hono/cookie'
@@ -37,7 +38,7 @@ app.openapi(
     const token = await create_token(c, code, state)
     setCookie(c, 'access_token', token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax'
     })
     return c.redirect(new URL(c.env.APP_REDIRECT_URI).href)
@@ -46,9 +47,10 @@ app.openapi(
 
 app.openapi(
   createRoute({
-    method: HTTPMethod.DELETE,
+    method: HTTPMethod.POST,
     path: '/logout',
     tags: ['認証'],
+    middleware: [bearerToken],
     summary: 'ログアウト',
     description: 'ログイン情報を削除します',
     request: {},
@@ -65,7 +67,12 @@ app.openapi(
     }
   }),
   async (c) => {
-    deleteCookie(c, 'access_token')
-    return c.redirect(new URL(c.env.APP_REDIRECT_URI).href)
+    // @ts-ignore
+    deleteCookie(c, 'access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Lax'
+    })
+    return c.json({ success: true })
   }
 )

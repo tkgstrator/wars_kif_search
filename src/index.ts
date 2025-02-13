@@ -7,7 +7,6 @@ import utc from 'dayjs/plugin/utc'
 import { cache } from 'hono/cache'
 import { compress } from 'hono/compress'
 import { cors } from 'hono/cors'
-import { csrf } from 'hono/csrf'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { ZodError } from 'zod'
@@ -32,7 +31,6 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.tz.setDefault('Asia/Tokyo')
 
-app.basePath('/api')
 app.use('*', (c, next) => {
   if (new URL(c.req.url).hostname !== 'localhost') {
     cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
@@ -40,7 +38,7 @@ app.use('*', (c, next) => {
   return next()
 })
 app.use(logger())
-app.use(csrf())
+// app.use(csrf())
 app.use(compress({ encoding: 'deflate' }))
 app.use(
   '*',
