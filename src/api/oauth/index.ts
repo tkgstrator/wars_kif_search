@@ -3,7 +3,7 @@ import type { Bindings } from '@/utils/bindings'
 import { create_token } from '@/utils/discord'
 import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { setCookie } from 'hono/cookie'
+import { deleteCookie, setCookie } from 'hono/cookie'
 
 export const app = new OpenAPIHono<{ Bindings: Bindings }>()
 
@@ -40,6 +40,32 @@ app.openapi(
       secure: true,
       sameSite: 'Lax'
     })
+    return c.redirect(new URL(c.env.APP_REDIRECT_URI).href)
+  }
+)
+
+app.openapi(
+  createRoute({
+    method: HTTPMethod.DELETE,
+    path: '/logout',
+    tags: ['認証'],
+    summary: 'ログアウト',
+    description: 'ログイン情報を削除します',
+    request: {},
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({})
+          }
+        },
+        description: '認証情報'
+      },
+      ...NotFoundResponse
+    }
+  }),
+  async (c) => {
+    deleteCookie(c, 'access_token')
     return c.redirect(new URL(c.env.APP_REDIRECT_URI).href)
   }
 )
