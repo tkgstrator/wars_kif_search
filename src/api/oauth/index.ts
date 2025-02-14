@@ -1,7 +1,6 @@
 import { HTTPMethod } from '@/enums/method'
 import type { Bindings } from '@/utils/bindings'
 import { create_token } from '@/utils/discord'
-import { bearerToken } from '@/utils/middlewares/bearerToken'
 import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { deleteCookie, setCookie } from 'hono/cookie'
@@ -50,7 +49,6 @@ app.openapi(
     method: HTTPMethod.POST,
     path: '/logout',
     tags: ['認証'],
-    middleware: [bearerToken],
     summary: 'ログアウト',
     description: 'ログイン情報を削除します',
     request: {},
@@ -67,7 +65,6 @@ app.openapi(
     }
   }),
   async (c) => {
-    // @ts-ignore
     deleteCookie(c, 'access_token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

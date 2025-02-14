@@ -43,14 +43,14 @@ app.use(compress({ encoding: 'deflate' }))
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://dev.mito-shogi.com', 'https://mito-shogi.com'],
     credentials: true
   })
 )
 if (!process.env.DEV) {
-  app.doc('/api/specification', specification)
-  app.get('/api/docs', apiReference(reference))
-  app.notFound((c) => c.redirect('/api/docs'))
+  app.doc('/specification', specification)
+  app.get('/docs', apiReference(reference))
+  app.notFound((c) => c.redirect('/docs'))
 }
 app.onError(async (error, c) => {
   if (error instanceof HTTPException) {
@@ -61,9 +61,9 @@ app.onError(async (error, c) => {
   }
   return c.json({ message: error.message }, 500)
 })
-app.route('/api/users', users)
-app.route('/api/games', games)
-app.route('/api/oauth', oauth)
+app.route('/users', users)
+app.route('/games', games)
+app.route('/oauth', oauth)
 
 export default {
   fetch: app.fetch,

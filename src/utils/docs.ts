@@ -1,10 +1,10 @@
 import info from '@/../package.json'
 import type { ApiReferenceOptions } from '@scalar/hono-api-reference'
-import { lowerCase, startCase, upperFirst } from 'lodash'
+import { lowerCase, startCase } from 'lodash'
 
 export const reference: ApiReferenceOptions = {
   spec: {
-    url: '/api/specification'
+    url: '/specification'
   },
   defaultHttpClient: {
     targetKey: 'node',
