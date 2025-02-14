@@ -70,6 +70,6 @@ app.openapi(
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax'
     })
-    return c.json({ success: true })
+    return c.json({ status: true })
   }
 )

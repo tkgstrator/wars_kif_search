@@ -19,7 +19,6 @@ export const create_token = async (
   state: string
 ): Promise<string> => {
   const user: Discord.User = await get_user(await get_token(c, code))
-  console.log(user)
   try {
     return await KV.USER.create_token(c, await KV.USER.get(c, user.id), state)
   } catch (error) {
@@ -37,6 +36,7 @@ export const create_token = async (
  * @returns
  */
 const get_token = async (c: Context<{ Bindings: Bindings }>, code: string): Promise<Discord.Token> => {
+  const url: URL = new URL(c.req.url)
   return await request(Discord.Token, {
     method: HTTPMethod.POST,
     path: 'oauth2/token',
@@ -45,7 +45,7 @@ const get_token = async (c: Context<{ Bindings: Bindings }>, code: string): Prom
       client_secret: c.env.DISCORD_CLIENT_SECRET,
       code: code,
       grant_type: 'authorization_code',
-      redirect_uri: new URL('api/oauth/callback', 'http://localhost:28787').href
+      redirect_uri: new URL('oauth/callback', `${url.protocol}//${url.host}`).href
     })
   })
 }
