@@ -19,6 +19,7 @@ export const create_token = async (
   state: string
 ): Promise<string> => {
   const user: Discord.User = await get_user(await get_token(c, code))
+  console.log(user)
   try {
     return await KV.USER.create_token(c, await KV.USER.get(c, user.id), state)
   } catch (error) {
