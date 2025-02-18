@@ -21,10 +21,14 @@ crons = []
 
 # Variables
 [vars]
+APP_REDIRECT_URI = "https://dev.mito-shogi.com"
+DISCORD_CLIENT_ID = "1338809123067924520"
 
 [env.dev]
 
 [env.dev.vars]
+APP_REDIRECT_URI = "http://localhost:5173"
+DISCORD_CLIENT_ID = "1338809123067924520"
 
 [env.dev.observability]
 enabled = true

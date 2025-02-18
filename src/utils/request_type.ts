@@ -29,12 +29,17 @@ export const request = async <T, U>(
     url.search = new URLSearchParams(
       Object.fromEntries(Object.entries(request.parameters).map(([key, value]) => [key, String(value)]))
     ).toString()
+  } else {
+    url.search = new URLSearchParams({ locale: 'en', version: 'webapp_9.0.0_standard' }).toString()
   }
 
-  request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
   if (request.encoding === HTTPEncoding.JSON) {
-    request.headers = { 'Content-Type': 'application/json' }
+    request.headers = { 'Content-Type': 'application/json', Accept: '*/*' }
   }
+  if (request.encoding === HTTPEncoding.FORM) {
+    request.headers = { 'Content-Type': 'application/x-www-form-urlencoded', Accept: '*/*' }
+  }
+  request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
 
   const response = await fetch(url.href, {
     method: request.method,
@@ -44,7 +49,10 @@ export const request = async <T, U>(
         ? undefined
         : request.encoding === HTTPEncoding.JSON
           ? JSON.stringify(request.parameters)
-          : undefined
+          : new URLSearchParams(
+              Object.fromEntries(Object.entries(request.parameters).map(([key, value]) => [key, String(value)]))
+            ),
+    redirect: 'follow'
   })
 
   if (!response.ok) {
