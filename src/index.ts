@@ -56,7 +56,7 @@ app.use(
 app.use((c: Context, next: Next) =>
   rateLimiter<{ Bindings: Bindings }>({
     windowMs: 5 * 60 * 1000,
-    limit: 10,
+    limit: 100,
     standardHeaders: 'draft-7',
     keyGenerator: (c) =>
       c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown',
