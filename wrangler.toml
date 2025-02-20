@@ -13,6 +13,7 @@ logpush = true
 # Cloudflare Workers KV namespaces
 kv_namespaces = [
   { binding = "USERS", id = "8190882e6b104bf08561b1f2257f25d9", preview_id = "048371d8d5114023925d4b4364d1e668" },
+  { binding = "CACHE", id = "60fc87bcd9a443b385b186a67864ec8b", preview_id = "5b7d4f9a4a434dee94666845cbd6d23d" },
 ]
 
 # Cron Events

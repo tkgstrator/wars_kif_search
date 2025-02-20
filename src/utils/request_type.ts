@@ -1,5 +1,5 @@
 import { HTTPEncoding } from '@/enums/encoding'
-import type { HTTPMethod } from '@/enums/method'
+import { HTTPMethod } from '@/enums/method'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
@@ -41,11 +41,15 @@ export const request = async <T, U>(
   }
   request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
 
+  // console.log(url.href)
+  // console.log(request.headers)
+  // console.log(request.parameters)
+
   const response = await fetch(url.href, {
     method: request.method,
     headers: request.headers,
     body:
-      request.parameters === undefined
+      request.parameters === undefined || request.method === HTTPMethod.GET
         ? undefined
         : request.encoding === HTTPEncoding.JSON
           ? JSON.stringify(request.parameters)

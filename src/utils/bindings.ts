@@ -9,5 +9,6 @@ export type Bindings = {
   DISCORD_PUBLIC_KEY: string
   APP_REDIRECT_URI: string
   APP_JWT_SECRET: string
+  CACHE: KVNamespace
   USERS: KVNamespace
 }

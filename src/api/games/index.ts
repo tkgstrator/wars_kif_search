@@ -6,7 +6,6 @@ import { Paginated } from '@/models/paginated.dto'
 import { GameQuery } from '@/requests/game'
 import { User } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
-import { bearerToken } from '@/utils/middlewares/bearerToken'
 import { request } from '@/utils/request_type'
 import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
@@ -19,7 +18,7 @@ app.openapi(
     path: '/',
     tags: ['棋譜'],
     summary: '一覧',
-    middleware: [bearerToken],
+    // middleware: [bearerToken],
     description: '棋譜一覧を取得します',
     request: {},
     responses: {
@@ -57,7 +56,7 @@ app.openapi(
   createRoute({
     method: HTTPMethod.GET,
     path: '/{game_id}',
-    middleware: [bearerToken],
+    // middleware: [bearerToken],
     tags: ['棋譜'],
     summary: '詳細',
     description: '指定した対局IDの棋譜を取得します',

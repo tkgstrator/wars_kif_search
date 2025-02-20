@@ -31,11 +31,6 @@ export class Friend implements RequestType {
   encoding?: HTTPEncoding | undefined = HTTPEncoding.FORM
 
   constructor(c: Context<{ Bindings: Bindings }>, prefix: string) {
-    // this.parameters = {
-    //   locale: 'en',
-    //   page: page,
-    //   version: 'webapp_9.0.0_standard'
-    // }
     this.parameters = {
       authenticity_token: c.env.WARS_CODE,
       prefix: prefix,

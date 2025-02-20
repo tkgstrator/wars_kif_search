@@ -1,7 +1,8 @@
+import { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import { FriendInfo } from '@/models/friend_info.dto'
-import { GameInfo } from '@/models/game_info.dto'
-import { Friend } from '@/requests/user'
+import { GameInfo, GameInfoList } from '@/models/game_info.dto'
+import { Friend, User } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
 import { KV } from '@/utils/kv'
 import { bearerToken } from '@/utils/middlewares/bearerToken'
@@ -73,40 +74,42 @@ app.openapi(
   }
 )
 
-// app.openapi(
-//   createRoute({
-//     method: HTTPMethod.GET,
-//     path: '/{user_id}',
-//     tags: ['ユーザー'],
-//     summary: '棋譜一覧',
-//     description: '指定したユーザーの棋譜を取得します。',
-//     request: {
-//       params: z.object({
-//         user_id: z.string().openapi({ description: 'ユーザーID', example: 'its' })
-//       })
-//     },
-//     responses: {
-//       200: {
-//         content: {
-//           'application/json': {
-//             schema: z.array(GameInfo).openapi({ description: '棋譜詳細' })
-//           }
-//         },
-//         description: '棋譜一覧'
-//       },
-//       ...NotFoundResponse
-//     }
-//   }),
-//   async (c) => {
-//     const { user_id } = c.req.valid<'param'>('param')
-//     const games: GameInfo[] = (
-//       await Promise.all([
-//         request(c, new User(user_id, GameType.MIN_10, 1), GameInfoList),
-//         request(c, new User(user_id, GameType.MIN_3, 1), GameInfoList),
-//         request(c, new User(user_id, GameType.SEC_10, 1), GameInfoList)
-//       ])
-//     ).flat()
-//     console.log(games)
-//     return c.json(games)
-//   }
-// )
+app.openapi(
+  createRoute({
+    method: HTTPMethod.GET,
+    path: '/{user_id}',
+    tags: ['ユーザー'],
+    summary: '棋譜一覧',
+    description: '指定したユーザーの棋譜を取得します。',
+    request: {
+      params: z.object({
+        user_id: z.string().openapi({ description: 'ユーザーID', example: 'its' })
+      })
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.array(GameInfo).openapi({ description: '棋譜詳細' })
+          }
+        },
+        description: '棋譜一覧'
+      },
+      ...NotFoundResponse
+    }
+  }),
+  async (c) => {
+    const { user_id } = c.req.valid<'param'>('param')
+    const games: GameInfo[] = (
+      await Promise.all([
+        request(c, new User(user_id, GameType.MIN_10, 1), GameInfoList),
+        request(c, new User(user_id, GameType.MIN_3, 1), GameInfoList),
+        request(c, new User(user_id, GameType.SEC_10, 1), GameInfoList)
+      ])
+    ).flat()
+    return c.json({
+      count: games.length,
+      results: games
+    })
+  }
+)
