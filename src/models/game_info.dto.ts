@@ -1,4 +1,5 @@
 import { Platform } from '@/enums/platform'
+import { PlayerResult } from '@/enums/player_result'
 import { ResultType } from '@/enums/result_type'
 import { RuleType } from '@/enums/rule_type'
 import { TimeType } from '@/enums/time_type'
@@ -19,6 +20,8 @@ export const GameInfo = z.preprocess(
     if (input === null || input === undefined) {
       return input
     }
+    // @ts-ignore
+    const is_win: boolean = input.match(/<div class="contents winner">/) !== null
     // 千日手の場合にはどちらもlose_playerになる
     // @ts-ignore
     const player_match: RegExpMatchArray | null = input.match(/win_player" href="\/users\/mypage\/(.+?)\?/)
@@ -71,6 +74,7 @@ export const GameInfo = z.preprocess(
       platform: Platform.SHOGI_WARS,
       time: time,
       rule: rule,
+      status: player_match === null ? PlayerResult.DRAW : is_win ? PlayerResult.WIN : PlayerResult.LOSE,
       result:
         player_match === null
           ? ResultType.DRAW
@@ -87,6 +91,7 @@ export const GameInfo = z.preprocess(
     white: Player,
     time: z.nativeEnum(TimeType),
     rule: z.nativeEnum(RuleType),
+    status: z.nativeEnum(PlayerResult),
     result: z.nativeEnum(ResultType),
     platform: z.nativeEnum(Platform),
     tags: z.array(z.number())

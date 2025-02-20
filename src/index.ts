@@ -42,17 +42,6 @@ app.use('*', (c, next) => {
   }
   return next()
 })
-
-app.use((c: Context, next: Next) =>
-  rateLimiter<{ Bindings: Bindings }>({
-    windowMs: 5 * 60 * 1000,
-    limit: 10,
-    standardHeaders: 'draft-7',
-    keyGenerator: (c) =>
-      c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown',
-    store: new WorkersKVStore({ namespace: c.env.CACHE })
-  })(c, next)
-)
 app.use('*', timeout(5000))
 app.use(logger())
 app.use(csrf())
@@ -63,6 +52,16 @@ app.use(
     origin: ['http://localhost:5173', 'https://dev.mito-shogi.com', 'https://mito-shogi.com'],
     credentials: true
   })
+)
+app.use((c: Context, next: Next) =>
+  rateLimiter<{ Bindings: Bindings }>({
+    windowMs: 5 * 60 * 1000,
+    limit: 10,
+    standardHeaders: 'draft-7',
+    keyGenerator: (c) =>
+      c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown',
+    store: new WorkersKVStore({ namespace: c.env.CACHE })
+  })(c, next)
 )
 if (!process.env.DEV) {
   app.doc('/specification', specification)
