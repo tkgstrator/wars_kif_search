@@ -18,10 +18,9 @@ export namespace KV {
   }
 
   export namespace CSA {
-    export const set = async (c: Context<{ Bindings: Bindings }>, data: string): Promise<GameInfo[]> => {
-      const games: GameInfo[] = data.flat()
-      c.executionCtx.waitUntil(Promise.all(games.map((game) => c.env.CSA.put(game.game_id, JSON.stringify(game)))))
-      return games
+    export const set = async (c: Context<{ Bindings: Bindings }>, game_id: string, data: string): Promise<string> => {
+      c.executionCtx.waitUntil(c.env.CSA.put(game_id, data))
+      return data
     }
   }
 

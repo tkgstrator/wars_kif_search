@@ -41,9 +41,9 @@ export const request = async <T, U>(
   }
   request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
 
-  // console.log(url.href)
-  // console.log(request.headers)
-  // console.log(request.parameters)
+  console.log(url.href)
+  console.log(request.headers)
+  console.log(request.parameters)
 
   const response = await fetch(url.href, {
     method: request.method,

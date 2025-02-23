@@ -29,9 +29,10 @@ export const GameInfo = z.preprocess(
     const players = [...input.matchAll(/(.*?)\s(\d+?)\s(Dan|Kyu)/g)].map((rank) => rank.map((v) => v.trim()))
     // @ts-ignore
     const category_match: RegExpMatchArray | null = input.match(
-      /<div class="game_category">\s*\[([\s\S]*?)\]\s([\S]*?)\s*<\/div>/
+      /<div class="game_category">\s*\[([\s\S]*?)\]\s*([\s\S]+?)\s*<\/div>/
     )
     if (category_match === null) {
+      console.error('ERROR!!!!!!')
       throw new HTTPException(400, { message: 'category parse error' })
     }
     const time: TimeType =

@@ -7,6 +7,7 @@ export type Bindings = {
   DISCORD_CLIENT_ID: string
   DISCORD_CLIENT_SECRET: string
   DISCORD_PUBLIC_KEY: string
+  DISCORD_WEBHOOK_URL: string
   APP_REDIRECT_URI: string
   APP_JWT_SECRET: string
   CACHE: KVNamespace

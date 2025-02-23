@@ -10,11 +10,10 @@ import { rateLimiter } from 'hono-rate-limiter'
 import { cache } from 'hono/cache'
 import { compress } from 'hono/compress'
 import { cors } from 'hono/cors'
-import { csrf } from 'hono/csrf'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
-import { timeout } from 'hono/timeout'
 import { ZodError } from 'zod'
+import { app as forms } from './api/forms'
 import { app as games } from './api/games'
 import { app as oauth } from './api/oauth'
 import { app as users } from './api/users'
@@ -36,17 +35,18 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.tz.setDefault('Asia/Tokyo')
 
-app.use('*', timeout(5000))
+// app.use('*', timeout(5000))
 app.use(logger())
 app.use(compress({ encoding: 'deflate' }))
 app.use(
   '*',
   cors({
     origin: ['http://localhost:5173', 'https://dev.mito-shogi.com', 'https://mito-shogi.com'],
-    credentials: true
+    credentials: true,
+    maxAge: 86400
   })
 )
-app.use(csrf())
+// app.use(csrf())
 app.use('*', (c, next) => {
   if (new URL(c.req.url).hostname !== 'localhost') {
     cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
@@ -80,6 +80,7 @@ app.onError(async (error, c) => {
 })
 app.route('/users', users)
 app.route('/games', games)
+app.route('/forms', forms)
 app.route('/oauth', oauth)
 
 export default {
