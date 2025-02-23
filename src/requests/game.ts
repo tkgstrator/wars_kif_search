@@ -17,7 +17,7 @@ export class GameQuery implements RequestType {
       secret: c.env.WARS_SECRET,
       game_id: game_id,
       locale: 'en',
-      version: 'webapp_9.0.0_standard'
+      version: 'webapp_10.0.0_standard'
     }
   }
 }

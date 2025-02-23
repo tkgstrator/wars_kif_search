@@ -19,7 +19,7 @@ app.openapi(
     tags: ['ユーザー'],
     summary: '取得',
     middleware: [bearerToken],
-    description: 'ユーザー情報を取得します',
+    description: 'ユーザー情報を返します。',
     request: {},
     responses: {
       200: {
@@ -43,12 +43,11 @@ app.openapi(
 app.openapi(
   createRoute({
     method: HTTPMethod.GET,
-    operationId: 'search',
     path: '/',
     tags: ['ユーザー'],
     summary: '検索',
     // middleware: [bearerToken],
-    description: 'ユーザー情報を検索します',
+    description: 'ユーザーの検索結果を返します。',
     request: {
       query: z.object({
         q: z.string().openapi({ description: 'ユーザー名', example: 'its' }),
@@ -80,7 +79,7 @@ app.openapi(
     path: '/{user_id}',
     tags: ['ユーザー'],
     summary: '棋譜一覧',
-    description: '指定したユーザーの棋譜を取得します。',
+    description: '指定したユーザーの棋譜一覧を返します。',
     request: {
       params: z.object({
         user_id: z.string().openapi({ description: 'ユーザーID', example: 'its' })

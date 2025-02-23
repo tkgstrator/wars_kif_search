@@ -64,12 +64,12 @@ export const GameInfo = z.preprocess(
       play_time: dayjs.tz(play_time[1], 'YYYYMMDD_HHmmss', 'Asia/Tokyo').utc().toISOString(),
       black: {
         name: players[0][1],
-        rank: Number.parseInt(players[0][2], 10),
+        rank: Number.parseInt(players[0][2], 10) * (players[0][3] === 'Dan' ? 1 : -1),
         is_win: player_match === null ? false : player_match[1] === players[0][1]
       },
       white: {
         name: players[1][1],
-        rank: Number.parseInt(players[1][2], 10),
+        rank: Number.parseInt(players[1][2], 10) * (players[1][3] === 'Dan' ? 1 : -1),
         is_win: player_match === null ? false : player_match[1] === players[1][1]
       },
       platform: Platform.SHOGI_WARS,

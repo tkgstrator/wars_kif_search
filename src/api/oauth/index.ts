@@ -13,7 +13,7 @@ app.openapi(
     path: '/callback',
     tags: ['認証'],
     summary: 'ログイン',
-    description: 'Discord OAuth2のコールバックです',
+    description: 'Discord認証後の独自発行のアクセストークンを返します。',
     request: {
       query: z.object({
         code: z.string(),

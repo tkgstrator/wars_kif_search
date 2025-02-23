@@ -30,7 +30,7 @@ export const request = async <T, U>(
       Object.fromEntries(Object.entries(request.parameters).map(([key, value]) => [key, String(value)]))
     ).toString()
   } else {
-    url.search = new URLSearchParams({ locale: 'en', version: 'webapp_9.0.0_standard' }).toString()
+    url.search = new URLSearchParams({ locale: 'en', version: 'webapp_10.0.0_standard' }).toString()
   }
 
   if (request.encoding === HTTPEncoding.JSON) {
@@ -41,9 +41,9 @@ export const request = async <T, U>(
   }
   request.headers = { ...request.headers, Cookie: `_web_session=${c.env.WARS_COOKIE}` }
 
-  console.log(url.href)
-  console.log(request.headers)
-  console.log(request.parameters)
+  // console.log(url.href)
+  // console.log(request.headers)
+  // console.log(request.parameters)
 
   const response = await fetch(url.href, {
     method: request.method,

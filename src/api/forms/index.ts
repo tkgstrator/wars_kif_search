@@ -14,7 +14,7 @@ app.openapi(
     path: '/',
     tags: ['フォーム'],
     summary: '送信',
-    description: '問い合わせを受け付けます',
+    description: '問い合わせを受け付けます。',
     request: {
       body: {
         content: {

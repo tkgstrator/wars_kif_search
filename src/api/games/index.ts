@@ -1,10 +1,7 @@
-import { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import { Game } from '@/models/game.dto'
-import { type GameInfo, GameInfoList } from '@/models/game_info.dto'
-import { Paginated } from '@/models/paginated.dto'
+import {} from '@/models/game_info.dto'
 import { GameQuery } from '@/requests/game'
-import { User } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
 import { KV } from '@/utils/kv'
 import { request } from '@/utils/request_type'
@@ -13,45 +10,45 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 
 export const app = new OpenAPIHono<{ Bindings: Bindings }>()
 
-app.openapi(
-  createRoute({
-    method: HTTPMethod.GET,
-    path: '/',
-    tags: ['棋譜'],
-    summary: '一覧',
-    // middleware: [bearerToken],
-    description: '棋譜一覧を取得します',
-    request: {},
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: Paginated(Game).openapi({ description: '棋譜一覧' })
-          }
-        },
-        description: '棋譜一覧'
-      },
-      ...NotFoundResponse
-    }
-  }),
-  async (c) => {
-    const { uid } = c.get('jwtPayload')
-    const games: GameInfo[] = (
-      await Promise.all([
-        // @ts-ignore
-        request(c, new User(uid, GameType.MIN_10, 1), GameInfoList),
-        // @ts-ignore
-        request(c, new User(uid, GameType.MIN_3, 1), GameInfoList),
-        // @ts-ignore
-        request(c, new User(uid, GameType.SEC_10, 1), GameInfoList)
-      ])
-    ).flat()
-    return c.json({
-      count: games.length,
-      results: games
-    })
-  }
-)
+// app.openapi(
+//   createRoute({
+//     method: HTTPMethod.GET,
+//     path: '/',
+//     tags: ['棋譜'],
+//     summary: '一覧',
+//     // middleware: [bearerToken],
+//     description: '棋譜一覧を返します。',
+//     request: {},
+//     responses: {
+//       200: {
+//         content: {
+//           'application/json': {
+//             schema: Paginated(Game).openapi({ description: '棋譜一覧' })
+//           }
+//         },
+//         description: '棋譜一覧'
+//       },
+//       ...NotFoundResponse
+//     }
+//   }),
+//   async (c) => {
+//     const { uid } = c.get('jwtPayload')
+//     const games: GameInfo[] = (
+//       await Promise.all([
+//         // @ts-ignore
+//         request(c, new User(uid, GameType.MIN_10, 1), GameInfoList),
+//         // @ts-ignore
+//         request(c, new User(uid, GameType.MIN_3, 1), GameInfoList),
+//         // @ts-ignore
+//         request(c, new User(uid, GameType.SEC_10, 1), GameInfoList)
+//       ])
+//     ).flat()
+//     return c.json({
+//       count: games.length,
+//       results: games
+//     })
+//   }
+// )
 
 app.openapi(
   createRoute({
@@ -60,7 +57,7 @@ app.openapi(
     // middleware: [bearerToken],
     tags: ['棋譜'],
     summary: '詳細',
-    description: '指定した対局IDの棋譜を取得します',
+    description: '指定した対局IDの棋譜をCSA形式で返します。',
     request: {
       params: z.object({
         game_id: z.string()

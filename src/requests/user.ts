@@ -18,7 +18,7 @@ export class User implements RequestType {
       locale: 'en',
       page: page,
       user_id: user_id,
-      version: 'webapp_9.0.0_standard'
+      version: 'webapp_10.0.0_standard'
     }
   }
 }

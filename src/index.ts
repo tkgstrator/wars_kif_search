@@ -10,8 +10,10 @@ import { rateLimiter } from 'hono-rate-limiter'
 import { cache } from 'hono/cache'
 import { compress } from 'hono/compress'
 import { cors } from 'hono/cors'
+import { csrf } from 'hono/csrf'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
+import { timeout } from 'hono/timeout'
 import { ZodError } from 'zod'
 import { app as forms } from './api/forms'
 import { app as games } from './api/games'
@@ -35,7 +37,7 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.tz.setDefault('Asia/Tokyo')
 
-// app.use('*', timeout(5000))
+app.use('*', timeout(5000))
 app.use(logger())
 app.use(compress({ encoding: 'deflate' }))
 app.use(
@@ -46,27 +48,29 @@ app.use(
     maxAge: 86400
   })
 )
-// app.use(csrf())
+app.use(csrf())
 app.use('*', (c, next) => {
   if (new URL(c.req.url).hostname !== 'localhost') {
     cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
   }
   return next()
 })
-app.use((c: Context, next: Next) =>
-  rateLimiter<{ Bindings: Bindings }>({
-    windowMs: 5 * 60 * 1000,
-    limit: 100,
-    standardHeaders: 'draft-7',
-    keyGenerator: (c) =>
-      c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown',
-    store: new WorkersKVStore({ namespace: c.env.CACHE })
-  })(c, next)
-)
 if (!process.env.DEV) {
   app.doc('/specification', specification)
   app.get('/docs', apiReference(reference))
   app.notFound((c) => c.redirect('/docs'))
+}
+if (process.env.DEV) {
+  app.use((c: Context, next: Next) =>
+    rateLimiter<{ Bindings: Bindings }>({
+      windowMs: 5 * 60 * 1000,
+      limit: 100,
+      standardHeaders: 'draft-7',
+      keyGenerator: (c) =>
+        c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || c.req.header('x-real-ip') || 'unknown',
+      store: new WorkersKVStore({ namespace: c.env.CACHE })
+    })(c, next)
+  )
 }
 app.onError(async (error, c) => {
   if (error instanceof HTTPException) {
