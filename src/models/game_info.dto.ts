@@ -60,7 +60,7 @@ export const GameInfo = z.preprocess(
     const tags: number[] = [...input.matchAll(/\/trophy\/(\d+)/g)].map((tag) => Number.parseInt(tag[1], 10))
     return {
       game_id: game_id,
-      play_time: dayjs(play_time[1], 'YYYYMMDD_HHmmss').tz('Asia/Tokyo').toISOString(),
+      play_time: dayjs.tz(play_time[1], 'YYYYMMDD_HHmmss', 'Asia/Tokyo').utc().toISOString(),
       black: {
         name: players[0][1],
         rank: Number.parseInt(players[0][2], 10),

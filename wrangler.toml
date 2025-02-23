@@ -14,6 +14,8 @@ logpush = true
 kv_namespaces = [
   { binding = "USERS", id = "8190882e6b104bf08561b1f2257f25d9", preview_id = "048371d8d5114023925d4b4364d1e668" },
   { binding = "CACHE", id = "60fc87bcd9a443b385b186a67864ec8b", preview_id = "5b7d4f9a4a434dee94666845cbd6d23d" },
+  { binding = "GAMES", id = "8c311702e4c14e49af57c8a4a3f99e5b", preview_id = "8518d164ca9f4088a3798ce2bc5eb4e6" },
+  { binding = "CSA", id = "502c0da019c04a7fa9d9eb4ac8a5ef1c", preview_id = "608fde71c54a4cc9b5b83da00eea6cf8" },
 ]
 
 # Cron Events

@@ -6,6 +6,7 @@ import { Paginated } from '@/models/paginated.dto'
 import { GameQuery } from '@/requests/game'
 import { User } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
+import { KV } from '@/utils/kv'
 import { request } from '@/utils/request_type'
 import { NotFoundResponse } from '@/utils/response'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
@@ -80,6 +81,6 @@ app.openapi(
   async (c) => {
     const { game_id } = c.req.valid<'param'>('param')
     // @ts-ignore
-    return c.text((await request(c, new GameQuery(c, game_id), Game)).csa)
+    return c.text(await KV.CSA.set(c, game_id, (await request(c, new GameQuery(c, game_id), Game)).csa))
   }
 )

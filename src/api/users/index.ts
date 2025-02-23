@@ -100,13 +100,14 @@ app.openapi(
   }),
   async (c) => {
     const { user_id } = c.req.valid<'param'>('param')
-    const games: GameInfo[] = (
+    const games: GameInfo[] = await KV.GAMES.set(
+      c,
       await Promise.all([
         request(c, new User(user_id, GameType.MIN_10, 1), GameInfoList),
         request(c, new User(user_id, GameType.MIN_3, 1), GameInfoList),
         request(c, new User(user_id, GameType.SEC_10, 1), GameInfoList)
       ])
-    ).flat()
+    )
     return c.json({
       count: games.length,
       results: games

@@ -36,15 +36,8 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.tz.setDefault('Asia/Tokyo')
 
-app.use('*', (c, next) => {
-  if (new URL(c.req.url).hostname !== 'localhost') {
-    cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
-  }
-  return next()
-})
 app.use('*', timeout(5000))
 app.use(logger())
-app.use(csrf())
 app.use(compress({ encoding: 'deflate' }))
 app.use(
   '*',
@@ -53,6 +46,13 @@ app.use(
     credentials: true
   })
 )
+app.use(csrf())
+app.use('*', (c, next) => {
+  if (new URL(c.req.url).hostname !== 'localhost') {
+    cache({ cacheName: 'wars_kif_search', cacheControl: 'public, max-age=3600' })
+  }
+  return next()
+})
 app.use((c: Context, next: Next) =>
   rateLimiter<{ Bindings: Bindings }>({
     windowMs: 5 * 60 * 1000,

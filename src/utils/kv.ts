@@ -1,4 +1,5 @@
 import { Discord } from '@/models/discord_token.dto'
+import type { GameInfo, GameInfoList } from '@/models/game_info.dto'
 import dayjs, { type Dayjs } from 'dayjs'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
@@ -8,6 +9,22 @@ import { uuidv7 } from 'uuidv7'
 import type { Bindings } from './bindings'
 
 export namespace KV {
+  export namespace GAMES {
+    export const set = async (c: Context<{ Bindings: Bindings }>, data: GameInfoList[]): Promise<GameInfo[]> => {
+      const games: GameInfo[] = data.flat()
+      c.executionCtx.waitUntil(Promise.all(games.map((game) => c.env.GAMES.put(game.game_id, JSON.stringify(game)))))
+      return games
+    }
+  }
+
+  export namespace CSA {
+    export const set = async (c: Context<{ Bindings: Bindings }>, data: string): Promise<GameInfo[]> => {
+      const games: GameInfo[] = data.flat()
+      c.executionCtx.waitUntil(Promise.all(games.map((game) => c.env.CSA.put(game.game_id, JSON.stringify(game)))))
+      return games
+    }
+  }
+
   export namespace USER {
     export const get = async (c: Context<{ Bindings: Bindings }>, id: string) => {
       const data: unknown | null = await c.env.USERS.get(id, { type: 'json' })

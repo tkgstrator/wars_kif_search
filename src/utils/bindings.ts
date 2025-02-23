@@ -11,4 +11,6 @@ export type Bindings = {
   APP_JWT_SECRET: string
   CACHE: KVNamespace
   USERS: KVNamespace
+  GAMES: KVNamespace
+  CSA: KVNamespace
 }
