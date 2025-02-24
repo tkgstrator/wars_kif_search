@@ -5,7 +5,7 @@ import type { Bindings } from '@/utils/bindings'
 import type { HTTPHeaders, RequestType } from '@/utils/request_type'
 import type { Context } from 'hono'
 
-export class User implements RequestType {
+export class GameListQuery implements RequestType {
   method = HTTPMethod.GET
   path = 'games/history'
   headers?: HTTPHeaders | undefined
@@ -23,7 +23,19 @@ export class User implements RequestType {
   }
 }
 
-export class Friend implements RequestType {
+export class UserQuery implements RequestType {
+  method = HTTPMethod.GET
+  path: string
+  headers?: HTTPHeaders | undefined
+  parameters?: Record<string, string | number | boolean> | undefined
+  encoding?: HTTPEncoding | undefined = undefined
+
+  constructor(user_id: string) {
+    this.path = `users/mypage/${user_id}`
+  }
+}
+
+export class FriendQuery implements RequestType {
   method = HTTPMethod.POST
   path = 'friends/search'
   headers?: HTTPHeaders | undefined

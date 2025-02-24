@@ -2,7 +2,8 @@ import { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import { FriendInfo } from '@/models/friend_info.dto'
 import { GameInfo, GameInfoList } from '@/models/game_info.dto'
-import { Friend, User } from '@/requests/user'
+import { UserInfo } from '@/models/user.dto'
+import { FriendQuery, GameListQuery, UserQuery } from '@/requests/user'
 import type { Bindings } from '@/utils/bindings'
 import { KV } from '@/utils/kv'
 import { bearerToken } from '@/utils/middlewares/bearerToken'
@@ -69,7 +70,7 @@ app.openapi(
   }),
   async (c) => {
     const { q, limit, offset } = c.req.valid<'query'>('query')
-    return c.json(await request(c, new Friend(c, q), FriendInfo))
+    return c.json(await request(c, new FriendQuery(c, q), FriendInfo))
   }
 )
 
@@ -99,16 +100,18 @@ app.openapi(
   }),
   async (c) => {
     const { user_id } = c.req.valid<'param'>('param')
+    const user = await request(c, new UserQuery(user_id), UserInfo)
     const games: GameInfo[] = await KV.GAMES.set(
       c,
       await Promise.all([
-        request(c, new User(user_id, GameType.MIN_10, 1), GameInfoList),
-        request(c, new User(user_id, GameType.MIN_3, 1), GameInfoList),
-        request(c, new User(user_id, GameType.SEC_10, 1), GameInfoList)
+        request(c, new GameListQuery(user_id, GameType.MIN_10, 1), GameInfoList),
+        request(c, new GameListQuery(user_id, GameType.MIN_3, 1), GameInfoList),
+        request(c, new GameListQuery(user_id, GameType.SEC_10, 1), GameInfoList)
       ])
     )
     return c.json({
-      count: games.length,
+      user_id: user_id,
+      ...user,
       results: games
     })
   }

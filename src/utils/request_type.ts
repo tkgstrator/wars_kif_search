@@ -68,6 +68,7 @@ export const request = async <T, U>(
     return S.parse(await response.json())
   }
 
+  // return await S.parseAsync(response)
   // 良くわからないときはHTMLとしてパースする
-  return S.parse(await response.text())
+  return await S.parseAsync(await response.text())
 }
