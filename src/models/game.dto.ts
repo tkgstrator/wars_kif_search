@@ -7,7 +7,7 @@ import { type Record, exportCSA, importCSA } from 'tsshogi'
 export const Game = z
   .object({
     game_id: z.string(),
-    game_type: z.nativeEnum(GameType),
+    game_time: z.nativeEnum(GameType.Time),
     kif: z.string(),
     result: z.string(),
     status: z.boolean(),
@@ -32,9 +32,9 @@ export const Game = z
         .tz('Asia/Tokyo')
         .format('YYYY/MM/DD HH:mm:ss')
       const time_format: string =
-        v.game_type === GameType.MIN_10 ? '600+0+0' : v.game_type === GameType.MIN_3 ? '180+0+0' : '0+10+0'
-      let black_init_time: number = v.game_type === GameType.MIN_10 ? 600 : 180
-      let white_init_time: number = v.game_type === GameType.MIN_10 ? 600 : 180
+        v.game_time === GameType.Time.MIN_10 ? '600+0+0' : v.game_time === GameType.Time.MIN_3 ? '180+0+0' : '0+10+0'
+      let black_init_time: number = v.game_time === GameType.Time.MIN_10 ? 600 : 180
+      let white_init_time: number = v.game_time === GameType.Time.MIN_10 ? 600 : 180
       const moves = v.kif.split('|').map((entry, index) => {
         const [move, timeStr] = entry.split(',')
         const time: number = Number.parseInt(timeStr, 10)
@@ -46,7 +46,8 @@ export const Game = z
         }
         return { move, consumed_time }
       })
-      const game_type: string = v.game_type === GameType.MIN_10 ? '10m' : v.game_type === GameType.MIN_3 ? '3m' : '10s'
+      const game_type: string =
+        v.game_time === GameType.Time.MIN_10 ? '10m' : v.game_time === GameType.Time.MIN_3 ? '3m' : '10s'
       const game: string = [
         'v3.0',
         `N+${black}`,

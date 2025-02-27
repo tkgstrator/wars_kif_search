@@ -1,4 +1,3 @@
-import { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import { FriendInfo } from '@/models/friend_info.dto'
 import { GameInfo, GameInfoList } from '@/models/game_info.dto'
@@ -104,9 +103,10 @@ app.openapi(
     const games: GameInfo[] = await KV.GAMES.set(
       c,
       await Promise.all([
-        request(c, new GameListQuery(user_id, GameType.MIN_10, 1), GameInfoList),
-        request(c, new GameListQuery(user_id, GameType.MIN_3, 1), GameInfoList),
-        request(c, new GameListQuery(user_id, GameType.SEC_10, 1), GameInfoList)
+        request(c, new GameListQuery(user_id, 'normal', 'normal', ''), GameInfoList),
+        request(c, new GameListQuery(user_id, 'normal', 'normal', 'sb'), GameInfoList),
+        request(c, new GameListQuery(user_id, 'normal', 'normal', 's1'), GameInfoList),
+        request(c, new GameListQuery(user_id, 'normal', 'sprint', 'sb'), GameInfoList)
       ])
     )
     return c.json({

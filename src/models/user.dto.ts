@@ -1,3 +1,4 @@
+import { InitPosType } from '@/enums/init_pos_type'
 import { TimeType } from '@/enums/time_type'
 import { z } from '@hono/zod-openapi'
 import { selectAll, selectOne } from 'css-select'
@@ -9,10 +10,14 @@ const Result = z.object({
   lose: z.number().int().min(0)
 })
 
-const Status = z.object({
+const Rule = z.object({
   time: z.nativeEnum(TimeType),
+  rule: z.nativeEnum(InitPosType),
   rank: z.number().int().min(-10000).max(10),
-  rate: z.number().min(0).max(100),
+  rate: z.number().min(0).max(100)
+})
+
+const Record = z.object({
   black: Result,
   white: Result
 })
@@ -25,7 +30,7 @@ const Trophy = z.object({
 /**
  * ルールごとの達成率とか段位とか
  */
-const Rule = z.preprocess(
+const _Rule = z.preprocess(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (document: any) => {
     const timeText: string = selectOne('th', document)?.children[0].data.trim()
@@ -48,22 +53,19 @@ const Rule = z.preprocess(
       return Number.parseFloat(rate)
     })()
     return {
-      time: timeText === '10 minutes' ? TimeType.MIN_10 : timeText === '3 minutes' ? TimeType.MIN_3 : TimeType.SEC_10,
+      time: timeText === '10 min' ? TimeType.MIN_10 : timeText === '10 sec' ? TimeType.SEC_10 : TimeType.MIN_3,
+      rule: timeText.toLocaleLowerCase() === InitPosType.SPRINT ? InitPosType.SPRINT : InitPosType.NORMAL,
       rank: rank,
       rate: rate
     }
   },
-  z.object({
-    time: z.string(),
-    rank: z.number().int().min(-10000).max(10),
-    rate: z.number().min(0).max(100)
-  })
+  Rule
 )
 
 /**
  * 戦績とか
  */
-const Record = z.preprocess(
+const _Record = z.preprocess(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (document: any) => {
     const divs = selectAll('div', document)
@@ -94,21 +96,15 @@ const Record = z.preprocess(
       white: white
     }
   },
-  z.object({
-    black: z.object({
-      win: z.number().int().min(0),
-      lose: z.number().int().min(0)
-    }),
-    white: z.object({
-      win: z.number().int().min(0),
-      lose: z.number().int().min(0)
-    })
-  })
+  Record
 )
 
 export const UserInfo = z.preprocess(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   async (input: any) => {
+    if (input === null || input === undefined) {
+      return input
+    }
     const document = parseDocument(DomUtils.getInnerHTML(parseDocument(input)))
     // @ts-ignore
     const src = selectOne('#user_profile .profile img', document).attribs.src
@@ -116,8 +112,8 @@ export const UserInfo = z.preprocess(
     if (match === null) {
       throw new HTTPException(400, { message: 'User Avatar Parse Failed' })
     }
-    const rules = selectAll('table#user_dankyu tr', document).map((rule) => Rule.parse(rule))
-    const records = selectAll('.game_record.data_rows', document).map((record) => Record.parse(record))
+    const rules = selectAll('table#user_dankyu tr', document).map((rule) => _Rule.parse(rule))
+    const records = selectAll('.game_record.data_rows', document).map((record) => _Record.parse(record))
     return {
       avatar: match[1],
       status: rules.map((rule, index) => Object.assign({}, rule, records[index]))
@@ -125,6 +121,6 @@ export const UserInfo = z.preprocess(
   },
   z.object({
     avatar: z.string(),
-    status: z.array(Status)
+    status: z.array(Record.merge(Rule))
   })
 )

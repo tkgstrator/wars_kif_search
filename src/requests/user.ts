@@ -1,9 +1,15 @@
 import { HTTPEncoding } from '@/enums/encoding'
-import type { GameType } from '@/enums/game_type'
 import { HTTPMethod } from '@/enums/method'
 import type { Bindings } from '@/utils/bindings'
 import type { HTTPHeaders, RequestType } from '@/utils/request_type'
 import type { Context } from 'hono'
+
+export const GameMode = ['normal', 'friend', 'coach', 'closed_event', 'learning'] as const
+export type GameMode = (typeof GameMode)[number]
+export const GameRule = ['normal', 'sprint'] as const
+export type GameRule = (typeof GameRule)[number]
+export const GameTime = ['', 'sb', 's1'] as const
+export type GameTime = (typeof GameTime)[number]
 
 export class GameListQuery implements RequestType {
   method = HTTPMethod.GET
@@ -12,11 +18,21 @@ export class GameListQuery implements RequestType {
   parameters?: Record<string, string | number | boolean> | undefined
   encoding?: HTTPEncoding | undefined = HTTPEncoding.QUERY
 
-  constructor(user_id: string, gtype: GameType, page: number) {
+  constructor(
+    user_id: string,
+    mode: GameMode,
+    rule: GameRule,
+    time: GameTime
+    // month: string,
+    // is_latest: boolean
+  ) {
     this.parameters = {
-      gtype: gtype,
+      opponent_type: mode,
+      init_pos_type: rule,
+      // month: month,
+      // is_latest: is_latest,
+      gtype: time,
       locale: 'en',
-      page: page,
       user_id: user_id,
       version: 'webapp_10.0.0_standard'
     }

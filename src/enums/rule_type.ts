@@ -1,4 +1,5 @@
 export enum RuleType {
-  UNKNOWN = 'unknown',
-  NORMAL = 'normal'
+  NORMAL = 'normal',
+  SPRINT = 'sprint',
+  UNKNOWN = 'unknown'
 }
