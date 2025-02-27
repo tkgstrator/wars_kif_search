@@ -1,5 +1,4 @@
-import { InitPosType } from '@/enums/init_pos_type'
-import { TimeType } from '@/enums/time_type'
+import { GameType } from '@/enums/game_type'
 import { z } from '@hono/zod-openapi'
 import { selectAll, selectOne } from 'css-select'
 import { HTTPException } from 'hono/http-exception'
@@ -11,8 +10,8 @@ const Result = z.object({
 })
 
 const Rule = z.object({
-  time: z.nativeEnum(TimeType),
-  rule: z.nativeEnum(InitPosType),
+  time: z.nativeEnum(GameType.Time),
+  rule: z.nativeEnum(GameType.Rule),
   rank: z.number().int().min(-10000).max(10),
   rate: z.number().min(0).max(100)
 })
@@ -33,7 +32,7 @@ const Trophy = z.object({
 const _Rule = z.preprocess(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (document: any) => {
-    const timeText: string = selectOne('th', document)?.children[0].data.trim()
+    const timeText: string = selectOne('th', document)?.children[0].data.trim().toLocaleLowerCase()
     const rankText: string = selectOne('.dankyu', document)?.children[0].data.trim()
     const rateText: string = selectOne('.progress_bar span', document)?.children[0].data.trim()
     const rank = (() => {
@@ -53,8 +52,8 @@ const _Rule = z.preprocess(
       return Number.parseFloat(rate)
     })()
     return {
-      time: timeText === '10 min' ? TimeType.MIN_10 : timeText === '10 sec' ? TimeType.SEC_10 : TimeType.MIN_3,
-      rule: timeText.toLocaleLowerCase() === InitPosType.SPRINT ? InitPosType.SPRINT : InitPosType.NORMAL,
+      time: timeText === GameType.Rule.SPRINT ? GameType.Time.MIN_3 : timeText,
+      rule: timeText !== GameType.Rule.SPRINT ? GameType.Rule.NORMAL : timeText,
       rank: rank,
       rate: rate
     }

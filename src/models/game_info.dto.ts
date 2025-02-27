@@ -44,7 +44,6 @@ const _GameInfo = z.preprocess(
     if (game_id === null) {
       throw new HTTPException(400, { message: 'game_id parse error' })
     }
-    console.log(input.attribs.class)
     const is_win: boolean = input.attribs.class === 'game_list_contents winner_bg'
     const is_draw: boolean = input.attribs.class === 'game_list_contents flat_bg'
     const mode: string = selectOne('div.game_category .opponent_type_text', input).children[0].data.trim()
