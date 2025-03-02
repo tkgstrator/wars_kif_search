@@ -17,7 +17,7 @@ export namespace KV {
     ): Promise<GameInfo[]> => {
       const games: GameInfo[] = data.flat()
       c.executionCtx.waitUntil(
-        Promise.all(games.map((game) => c.env.GAMES.put(`${prefix}:game.game_id}`, JSON.stringify(game))))
+        Promise.all(games.map((game) => c.env.GAMES.put(`${prefix}:${game.game_id}`, JSON.stringify(game))))
       )
       return games
     }
