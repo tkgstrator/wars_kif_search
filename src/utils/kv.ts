@@ -10,9 +10,15 @@ import type { Bindings } from './bindings'
 
 export namespace KV {
   export namespace GAMES {
-    export const set = async (c: Context<{ Bindings: Bindings }>, data: GameInfoList[]): Promise<GameInfo[]> => {
+    export const set = async (
+      c: Context<{ Bindings: Bindings }>,
+      prefix: string,
+      data: GameInfoList[]
+    ): Promise<GameInfo[]> => {
       const games: GameInfo[] = data.flat()
-      c.executionCtx.waitUntil(Promise.all(games.map((game) => c.env.GAMES.put(game.game_id, JSON.stringify(game)))))
+      c.executionCtx.waitUntil(
+        Promise.all(games.map((game) => c.env.GAMES.put(`${prefix}:game.game_id}`, JSON.stringify(game))))
+      )
       return games
     }
   }
