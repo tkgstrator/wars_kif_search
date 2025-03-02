@@ -55,7 +55,7 @@ const _Rule = z.preprocess(
       time: timeText === GameType.Rule.SPRINT ? GameType.Time.MIN_3 : timeText,
       rule: timeText !== GameType.Rule.SPRINT ? GameType.Rule.NORMAL : timeText,
       rank: rank,
-      rate: rate
+      rate: rate * 0.01
     }
   },
   Rule
@@ -107,7 +107,7 @@ export const UserInfo = z.preprocess(
     const document = parseDocument(DomUtils.getInnerHTML(parseDocument(input)))
     // @ts-ignore
     const src = selectOne('#user_profile .profile img', document).attribs.src
-    const match = src.match(/\/(\w+)-l\.png/)
+    const match = src.match(/avatar\/(.*)-l\.png/)
     if (match === null) {
       throw new HTTPException(400, { message: 'User Avatar Parse Failed' })
     }
