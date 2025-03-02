@@ -37,12 +37,14 @@ export namespace GameType {
   export enum Status {
     WIN = 'win',
     LOSE = 'lose',
-    DRAW = 'draw'
+    DRAW = 'draw',
+    PLAYING = 'playing'
   }
 
   export enum Result {
     BLACK_WIN = 'black_win',
     WHITE_WIN = 'white_win',
-    DRAW = 'draw'
+    DRAW = 'draw',
+    PLAYING = 'playing'
   }
 }

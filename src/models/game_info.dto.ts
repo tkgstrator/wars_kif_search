@@ -46,6 +46,10 @@ const _GameInfo = z.preprocess(
     }
     const is_win: boolean = input.attribs.class === 'game_list_contents winner_bg'
     const is_draw: boolean = input.attribs.class === 'game_list_contents flat_bg'
+    const is_playing: boolean = selectOne(
+      'div.game_players .left_right_players .left_player img.win_lose_img',
+      input
+    ).attribs.src.includes('playing')
     const mode: string = selectOne('div.game_category .opponent_type_text', input).children[0].data.trim()
     const rule: string = selectOne('div.game_category .init_pos_type_text', input).children[0].data.trim()
     const time: string = selectOne('div.game_category .time_mode_text', input).children[0].data.trim()
@@ -84,8 +88,20 @@ const _GameInfo = z.preprocess(
       mode: mode.toLocaleLowerCase(),
       time: time.toLocaleLowerCase(),
       rule: rule.toLocaleLowerCase(),
-      status: is_draw ? GameType.Status.DRAW : is_win ? GameType.Status.WIN : GameType.Status.LOSE,
-      result: is_draw ? GameType.Result.DRAW : black.is_win ? GameType.Result.BLACK_WIN : GameType.Result.WHITE_WIN,
+      status: is_playing
+        ? GameType.Status.PLAYING
+        : is_draw
+          ? GameType.Status.DRAW
+          : is_win
+            ? GameType.Status.WIN
+            : GameType.Status.LOSE,
+      result: is_playing
+        ? GameType.Result.PLAYING
+        : is_draw
+          ? GameType.Result.DRAW
+          : black.is_win
+            ? GameType.Result.BLACK_WIN
+            : GameType.Result.WHITE_WIN,
       platform: Platform.SHOGI_WARS,
       tags: tags
     }

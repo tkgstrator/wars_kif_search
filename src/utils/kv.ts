@@ -21,6 +21,12 @@ export namespace KV {
       )
       return games
     }
+
+    export const remove = async (c: Context<{ Bindings: Bindings }>): Promise<string[]> => {
+      const keys: string[] = (await c.env.GAMES.list()).keys.map((key) => key.name)
+      c.executionCtx.waitUntil(Promise.all(keys.map((key) => c.env.GAMES.delete(key))))
+      return keys
+    }
   }
 
   export namespace CSA {

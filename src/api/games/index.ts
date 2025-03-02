@@ -81,3 +81,29 @@ app.openapi(
     return c.text(await KV.CSA.set(c, game_id, (await request(c, new GameQuery(c, game_id), Game)).csa))
   }
 )
+
+app.openapi(
+  createRoute({
+    method: HTTPMethod.DELETE,
+    path: '/',
+    // middleware: [bearerToken],
+    tags: ['棋譜'],
+    summary: '削除',
+    description: '対局情報を削除します',
+    request: {},
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.array(Game).openapi({ description: '棋譜' })
+          }
+        },
+        description: '棋譜'
+      },
+      ...NotFoundResponse
+    }
+  }),
+  async (c) => {
+    return c.json(await KV.GAMES.remove(c))
+  }
+)

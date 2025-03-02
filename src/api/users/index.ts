@@ -121,7 +121,7 @@ app.openapi(
     method: HTTPMethod.GET,
     path: '/{user_id}/status',
     tags: ['ユーザー'],
-    summary: '棋譜一覧',
+    summary: 'ステータス',
     description: '指定したユーザーの情報を返します。',
     request: {
       params: z.object({
