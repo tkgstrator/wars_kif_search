@@ -99,7 +99,6 @@ app.openapi(
   }),
   async (c) => {
     const { user_id } = c.req.valid<'param'>('param')
-    const user = await request(c, new UserQuery(user_id), UserInfo)
     const games: GameInfo[] = await KV.GAMES.set(
       c,
       await Promise.all([
@@ -111,8 +110,37 @@ app.openapi(
     )
     return c.json({
       user_id: user_id,
-      ...user,
       results: games
     })
+  }
+)
+
+app.openapi(
+  createRoute({
+    method: HTTPMethod.GET,
+    path: '/{user_id}/status',
+    tags: ['ユーザー'],
+    summary: '棋譜一覧',
+    description: '指定したユーザーの情報を返します。',
+    request: {
+      params: z.object({
+        user_id: z.string().openapi({ description: 'ユーザーID', example: 'its' })
+      })
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.array(GameInfo).openapi({ description: '棋譜詳細' })
+          }
+        },
+        description: '棋譜一覧'
+      },
+      ...NotFoundResponse
+    }
+  }),
+  async (c) => {
+    const { user_id } = c.req.valid<'param'>('param')
+    return c.json(await request(c, new UserQuery(user_id), UserInfo))
   }
 )
